@@ -7,7 +7,7 @@
 #ffff99,Raw vegetable,Raw vegetable,OBJECT CHILD HAND R
 #ffbf80,Chicken,Chicken,OBJECT CHILD HAND R
 #ffa64d,Chicken feces,Chicken feces,OBJECT CHILD HAND R
-<COLUMN>,,,
+<COLUMN>TODO,,,
 #ccff99,Furniture/brick,Furniture/brick,OBJECT CHILD HAND R
 #ccff99,Paper,Paper,OBJECT CHILD HAND R
 #ccff99,Metal,Metal,OBJECT CHILD HAND R
@@ -16,7 +16,7 @@
 #ffff99,Cooked vegetable,Cooked vegetable,OBJECT CHILD HAND R
 #ffbf80,Goat/Cow,Goat/cow,OBJECT CHILD HAND R
 #ffa64d,Goat/cow feces,Goat/cow feces,OBJECT CHILD HAND R
-<COLUMN>,,,
+<COLUMN>TODO,,,
 #ccff99,Other object,Other object,OBJECT CHILD HAND R
 #ccff99,Cloth,Cloth,OBJECT CHILD HAND R
 #ccff99,Plastic,Plastic,OBJECT CHILD HAND R
@@ -25,7 +25,7 @@
 #ffff99,Dal,Dal,OBJECT CHILD HAND R
 #ffbf80,Other animal,Other animal,OBJECT CHILD HAND R
 #ffa64d,Other animal feces,Other animal feces,OBJECT CHILD HAND R
-<COLUMN>,,,
+<COLUMN>TODO,,,
 #ededed,Not in view,Not in view,OBJECT CHILD HAND R
 #9d9d9d,Nothing,None,OBJECT CHILD HAND R
 #ffc6bd,Touch,Touch,INTERACTION CHILD HAND R

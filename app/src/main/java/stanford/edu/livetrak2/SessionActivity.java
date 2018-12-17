@@ -186,19 +186,44 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
         this.timeOffset = observationTime.longValue();
         writeLineToOutput("DATE/TIME: " + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date()));
         writeLineToOutput("");
-        writeLineToOutput("Elapsed time (ms), Location, Observation");
+        //writeLineToOutput("Elapsed time (ms), Location, Observation");
+        String columnLabels = new String("Elapsed time (ms)");
+        for (String s : buttonGroups.keySet()) {
+            columnLabels += "," + s;
+        }
+        writeLineToOutput(columnLabels);
     }
 
     public void recordChange(RadioButtonGroup group) {
-        Long observationTime = Long.valueOf(SystemClock.elapsedRealtime());
 
+        Long observationTime = Long.valueOf(SystemClock.elapsedRealtime());
+        if (this.timeOffset < 0) {
+            writeOutputHeader(observationTime);
+        }
+        /*
         for(RadioButtonGroup g : buttonGroups.values()) {
+            // TODO remove this, replace with a start button.
             if (!g.isChecked()) {
                 //Do not record an observation if a radio button group does not have a selectio
                 return;
             }
-        }
+        }*/
 
+        String row = new String(new StringBuilder(String.valueOf(observationTime.longValue() - this.timeOffset)));
+        for (RadioButtonGroup g : buttonGroups.values()) {
+            Log.w(TAG, "DEBUG GROUP NAME: " + g.groupName);
+            View view = g.getCheckedRadioButton();
+            row += ",";
+            if (view != null) {
+                row += g.getCheckedRadioButton().toString();
+            } else {
+                row += "N/A";
+            }
+        }
+        Log.w(TAG, "DEBUG row " + row);
+        writeLineToOutput(row);
+       // writeLineToOutput(append(radioButtonGroupName).append(",").append(selectedOption).toString());
+/*
         if (this.timeOffset < 0) {
             //for the first observation, record everything
             for(RadioButtonGroup g : buttonGroups.values()) {
@@ -206,15 +231,15 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
             }
         } else {
             recordObservation(observationTime, group.groupName, group.getCheckedRadioButton().toString());
-        }
+        }*/
     }
 
-    private void recordObservation(Long observationTime, String radioButtonGroupName, String selectedOption) {
+    /*private void recordObservation(Long observationTime, String radioButtonGroupName, String selectedOption) {
         if (this.timeOffset < 0) {
             writeOutputHeader(observationTime);
         }
         writeLineToOutput(new StringBuilder(String.valueOf(observationTime.longValue() - this.timeOffset)).append(",").append(radioButtonGroupName).append(",").append(selectedOption).toString());
-    }
+    }*/
 
     private void endSession(View v) {
         try {
