@@ -1,6 +1,7 @@
 package stanford.edu.livetrak2;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.res.AssetManager;
 import android.content.DialogInterface;
@@ -116,8 +117,7 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
                 pauseResumeButton = new Button(this);
                 pauseResumeButton.setText("PAUSE/RESUME");
                 pauseResumeButton.setBackgroundColor(Color.GRAY);
-                timer = new Timer(); // TODO replace with the other timer....
-                // TODO start paused.
+                timer = new Timer();
                 timerTask = new TimerTask() {
                     @Override
                     public void run() {
@@ -156,12 +156,28 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
                             // and the END row will have a timestamp 5 minutes after PAUSE/RESUME was pressed.
                             // It may be useful to know the time at which the pause happened.
                         } else {
-                            pauseResumeButton.setBackgroundColor(Color.rgb(200, 0, 0));
                             if (timeOffset == -1) {
+                                for (RadioButtonGroup g : buttonGroups.values()) {
+                                    View view = g.getCheckedRadioButton();
+                                    if (view == null) {
+                                        AlertDialog alertDialog = new AlertDialog.Builder(SessionActivity.this).create();
+                                        alertDialog.setTitle("Alert");
+                                        alertDialog.setMessage("You must select a button for " + g.groupName);
+                                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+                                        alertDialog.show();
+                                        return;
+                                    }
+                                }
                                 writeOutputHeader(Long.valueOf(SystemClock.elapsedRealtime()).longValue());
                             } else {
                                 timeOffset = timeOffset + (Long.valueOf(SystemClock.elapsedRealtime()).longValue() - pauseTime);
                             }
+                            pauseResumeButton.setBackgroundColor(Color.rgb(200, 0, 0));
                         }
                         isRunning = !isRunning;
                         recordChange(null);
@@ -329,11 +345,6 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
 }
 
 // TODO:
-// - ensure that changing settings WHILE paused doesn't cause a new row, but a new row is printed
-//   when resuming.
-// - Check behavior of pausing and resuming even without pressing a button in between.
-// - pause/resume Button falls off the screen
-// - all column tops should be flush
 // - have an indicator for if every category has a selection.
 // - message saying file was successfully saved.
 // - SAVE TO FILE AS YOU GO, NOT JUST AT END.
