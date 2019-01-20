@@ -336,16 +336,35 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
         try {
             writeLineToOutput(new StringBuilder(String.valueOf(getRecordingTime())).append(", END").toString());
             this.fw.close();
+            AlertDialog alertDialog = new AlertDialog.Builder(SessionActivity.this).create();
+            alertDialog.setTitle("Success");
+            alertDialog.setMessage("Session output saved successfully!");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            startActivity(new Intent(SessionActivity.this, LoginActivity.class));
+                        }
+                    });
+            alertDialog.show();
         } catch (IOException e) {
             Log.e(TAG, "Error closing file");
             e.printStackTrace();
+            AlertDialog alertDialog = new AlertDialog.Builder(SessionActivity.this).create();
+            alertDialog.setTitle("Error");
+            alertDialog.setMessage("Error closing session output :(");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            startActivity(new Intent(SessionActivity.this, LoginActivity.class));
+                        }
+                    });
+            alertDialog.show();
         }
-        startActivity(new Intent(this, LoginActivity.class));
     }
 }
 
 // TODO:
-// - have an indicator for if every category has a selection.
 // - message saying file was successfully saved.
 // - SAVE TO FILE AS YOU GO, NOT JUST AT END.
-// - Do not allow clicking RESUME unless every category has a selection.
