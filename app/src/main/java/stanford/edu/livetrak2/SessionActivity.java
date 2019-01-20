@@ -5,8 +5,7 @@ import android.app.AlertDialog.Builder;
 import android.content.res.AssetManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Typeface;
-import android.media.MediaCas;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
@@ -14,6 +13,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
@@ -27,6 +27,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class SessionActivity extends Activity implements LiveTrakConstants {
     private static final String APP_STORAGE_DIR = "LiveTrak/";
@@ -35,8 +38,13 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
     private static File appOutputDir = null;
     private FileWriter fw;
     private HashMap<String, RadioButtonGroup> buttonGroups = new HashMap();
+    Button pauseResumeButton;
+    private Timer timer;
+    private TimerTask timerTask;
+    boolean isRunning = false;
 
-    private long timeOffset = -1;
+    long timeOffset = -1;
+    long pauseTime = -1;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +66,9 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
         Log.i(TAG, "output dir exists now: " + outputDir.getAbsolutePath());
         return outputDir;
     }
-
+    Long getRecordingTime() {
+        return Long.valueOf(SystemClock.elapsedRealtime()).longValue() - timeOffset;
+    }
     private void initializeUi(Intent intent) {
         requestWindowFeature(1);
         getWindow().setFlags(1024, 1024);
@@ -94,6 +104,70 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
                     });
                 }
                 col.addView(rb);
+            }
+            // RadioButtonX rb = addNewRadioButton(new OptionData(0, "DEBUGEGG", "LogTODO", "group?"), buttonGroups);
+            // rb.getLayoutParams().height = buttonHeight;
+            // col.addView(rb);
+
+
+            //TextClock tc = new TextClock(this);
+            //col.addView(tc);
+            if (colIndx == 0) {
+                pauseResumeButton = new Button(this);
+                pauseResumeButton.setText("PAUSE/RESUME");
+                pauseResumeButton.setBackgroundColor(Color.GRAY);
+                timer = new Timer(); // TODO replace with the other timer....
+                // TODO start paused.
+                timerTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        SessionActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Has recording started?
+                                if (SessionActivity.this.isRunning) {
+                                    Long time = SessionActivity.this.getRecordingTime();
+                                    Long hours = TimeUnit.MILLISECONDS.toHours(time);
+                                    Long minutes = TimeUnit.MILLISECONDS.toMinutes(time);
+                                    Long seconds = TimeUnit.MILLISECONDS.toSeconds(time);
+                                    String timeText = String.format("%02d:%02d:%02d",
+                                            hours,
+                                            minutes - TimeUnit.HOURS.toMinutes(hours),
+                                            seconds - TimeUnit.MINUTES.toSeconds(minutes));
+                                    SessionActivity.this.pauseResumeButton.setText("PAUSE/RESUME\n" + timeText);
+                                }
+                            }
+                        });
+                    }
+                };
+                timer.schedule(timerTask, 0, 500);
+
+                // https://stackoverflow.com/questions/9738239/android-accessing-ui-element-from-timer-thread
+
+                // pauseResumeButton.setText("PAUSE/RESUME");
+                pauseResumeButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (isRunning) {
+                            pauseResumeButton.setBackgroundColor(Color.GRAY);
+                            pauseTime = Long.valueOf(SystemClock.elapsedRealtime()).longValue();
+                            recordChange(null);
+                            // We write a line even if pausing. The user could pause, wait 5 minutes, then hit END,
+                            // and the END row will have a timestamp 5 minutes after PAUSE/RESUME was pressed.
+                            // It may be useful to know the time at which the pause happened.
+                        } else {
+                            pauseResumeButton.setBackgroundColor(Color.rgb(200, 0, 0));
+                            if (timeOffset == -1) {
+                                writeOutputHeader(Long.valueOf(SystemClock.elapsedRealtime()).longValue());
+                            } else {
+                                timeOffset = timeOffset + (Long.valueOf(SystemClock.elapsedRealtime()).longValue() - pauseTime);
+                            }
+                        }
+                        isRunning = !isRunning;
+                        recordChange(null);
+                    }
+                });
+                col.addView(pauseResumeButton);
             }
             grid.addView(col);
         }
@@ -195,12 +269,13 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
     }
 
     public void recordChange(RadioButtonGroup group) {
+        if (!isRunning) return;
 
+        /*
         Long observationTime = Long.valueOf(SystemClock.elapsedRealtime());
         if (this.timeOffset < 0) {
             writeOutputHeader(observationTime);
         }
-        /*
         for(RadioButtonGroup g : buttonGroups.values()) {
             // TODO remove this, replace with a start button.
             if (!g.isChecked()) {
@@ -209,7 +284,7 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
             }
         }*/
 
-        String row = new String(new StringBuilder(String.valueOf(observationTime.longValue() - this.timeOffset)));
+        String row = new String(new StringBuilder(String.valueOf(getRecordingTime())));
         for (RadioButtonGroup g : buttonGroups.values()) {
             Log.w(TAG, "DEBUG GROUP NAME: " + g.groupName);
             View view = g.getCheckedRadioButton();
@@ -243,7 +318,7 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
 
     private void endSession(View v) {
         try {
-            writeLineToOutput(new StringBuilder(String.valueOf(SystemClock.elapsedRealtime() - this.timeOffset)).append(", END").toString());
+            writeLineToOutput(new StringBuilder(String.valueOf(getRecordingTime())).append(", END").toString());
             this.fw.close();
         } catch (IOException e) {
             Log.e(TAG, "Error closing file");
@@ -252,3 +327,14 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
         startActivity(new Intent(this, LoginActivity.class));
     }
 }
+
+// TODO:
+// - ensure that changing settings WHILE paused doesn't cause a new row, but a new row is printed
+//   when resuming.
+// - Check behavior of pausing and resuming even without pressing a button in between.
+// - pause/resume Button falls off the screen
+// - all column tops should be flush
+// - have an indicator for if every category has a selection.
+// - message saying file was successfully saved.
+// - SAVE TO FILE AS YOU GO, NOT JUST AT END.
+// - Do not allow clicking RESUME unless every category has a selection.
