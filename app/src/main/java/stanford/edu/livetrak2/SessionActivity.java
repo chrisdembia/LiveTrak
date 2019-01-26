@@ -33,8 +33,8 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class SessionActivity extends Activity implements LiveTrakConstants {
-    private static final String APP_STORAGE_DIR = "LiveTrak/";
-    public static final String CONFIG_FILE = "LiveTrak_soil_v1.csv";
+    public static final String APP_STORAGE_DIR = "LiveTrak/";
+    public static final String DEFAULT_CONFIG_FILE = "LiveTrak_soil_v1.csv";
     private static String TAG = "SessionActivity";
     private static File appOutputDir = null;
     private FileWriter fw;
@@ -74,7 +74,7 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
         requestWindowFeature(1);
         getWindow().setFlags(1024, 1024);
 
-        LayoutData layoutData = loadData(CONFIG_FILE);
+        LayoutData layoutData = loadData(DEFAULT_CONFIG_FILE);
 
         LinearLayout grid = new LinearLayout(this);
         DisplayMetrics metrics = new DisplayMetrics();

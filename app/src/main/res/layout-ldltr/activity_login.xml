@@ -31,5 +31,13 @@
         android:ems="10"
         />
 
+    <Spinner
+        android:id="@+id/configId"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/config_id"
+        android:ems="10"
+        />
+
     <Button android:id="@+id/start" android:layout_width="300dp" android:layout_height="40dp" android:text="@string/new_session" android:onClick="newSession"/>
 </LinearLayout>

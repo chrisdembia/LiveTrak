@@ -11,6 +11,7 @@
     <string name="title_activity_main">LiveTraq</string>
     <string name="coder_id">Coder ID</string>
     <string name="subject_id">Subject ID</string>
+    <string name="config_id">Configuration File</string>
     <string name="config_file_name">Configuration File Name</string>
     <string name="default_config">2014_04_05_bangladesh.csv</string>
     <string name="new_session">Start New Session</string>

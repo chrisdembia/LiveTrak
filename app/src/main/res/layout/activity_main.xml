@@ -30,4 +30,12 @@
         android:hint="@string/subject_id"
         android:ems="10"
     />
+
+    <Spinner
+        android:id="@+id/configId"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/config_id"
+        android:ems="10"
+        />
 </LinearLayout>
