@@ -1,10 +1,12 @@
 package stanford.edu.livetrak2;
 
+import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.media.MediaCas;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -12,20 +14,33 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class LoginActivity extends AppCompatActivity {
+    private static String TAG = "LoginActivity";
     public static final String CODER_ID = "edu.stanford.livetraq.CODER_ID";
     // public static final String CONFIG_FILE = "edu.stanford.livetraq.CONFIG_FILE";
     // public static final String LANGUAGE = "edu.stanford.livetraq.LANGUAGE";
     public static final String SUBJECT_ID = "edu.stanford.livetraq.SUBJECT_ID";
     public static final String CONFIG_ID = "edu.stanford.livetraq.CONFIG_ID";
+    private static final int GET_CONTENT_CONFIG_FILE_CODE = 1;
+    private Spinner configId = null;
+    private ArrayAdapter<String> configSpinnerAdapter = null;
+    public static File configDir = null;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,38 +55,37 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         File root = Environment.getExternalStorageDirectory();
-        File configDir = new File(root, SessionActivity.APP_STORAGE_DIR + "config");
+        configDir = new File(root, SessionActivity.APP_STORAGE_DIR + "config");
         if (!configDir.exists()) configDir.mkdirs();
 
-        Spinner configId = (Spinner) findViewById(R.id.configId);
+        configId = (Spinner) findViewById(R.id.configId);
         List<String> spinnerArray = new ArrayList<>();
         spinnerArray.add(SessionActivity.DEFAULT_CONFIG_FILE);
         File[] configFiles = configDir.listFiles();
         for (File file : configFiles) {
             if (!file.isDirectory()) {
-                spinnerArray.add(file.getAbsolutePath().toString());
+                spinnerArray.add(file.getName());
             }
         }
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        configSpinnerAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, spinnerArray);
         // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        configSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        configId.setAdapter(adapter);
+        configId.setAdapter(configSpinnerAdapter);
 
-        /*
-        https://developer.android.com/guide/topics/providers/document-provider#java
-        int READ_REQUEST_CODE = 42;
-
-        Intent intentOpenConfig = new Intent(Intent.ACTION_GET_CONTENT);
-
-        intentOpenConfig.addCategory(Intent.CATEGORY_OPENABLE);
-
-        intentOpenConfig.setType("text/comma-separated-values");
-
-        startActivityForResult(intentOpenConfig, READ_REQUEST_CODE);
-        */
+        // Allow user to add config files.
+        // https://developer.android.com/guide/topics/providers/document-provider#java
+        final Button button = findViewById(R.id.addConfigFile);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intentOpenConfig = new Intent(Intent.ACTION_GET_CONTENT);
+                intentOpenConfig.addCategory(Intent.CATEGORY_OPENABLE);
+                intentOpenConfig.setType("text/comma-separated-values");
+                startActivityForResult(intentOpenConfig, GET_CONTENT_CONFIG_FILE_CODE);
+            }
+        });
     }
 
     public boolean isExternalStorageWritable() {
@@ -90,6 +104,62 @@ public class LoginActivity extends AppCompatActivity {
         return field.getText().toString().trim().isEmpty();
     }
 
+    protected void onActivityResult (int requestCode,
+                                     int resultCode,
+                                     Intent data) {
+        if (requestCode == GET_CONTENT_CONFIG_FILE_CODE) {
+            if(resultCode == Activity.RESULT_OK){
+                String result = data.getStringExtra("result");
+                Uri uri = null;
+                uri = data.getData();
+                if (uri != null) {
+                    Log.i(TAG, "Uri: " + uri.toString());
+                    String uriString = uri.toString();
+                    String lastPathSegment = uri.getLastPathSegment();
+                    String localFilename = lastPathSegment.substring(
+                            lastPathSegment.lastIndexOf(":") + 1);
+                    try {
+                        saveFile(getContentResolver().openInputStream(uri),
+                                (new File(configDir, localFilename)).toString());
+                        configSpinnerAdapter.add(localFilename);
+                        configSpinnerAdapter.notifyDataSetChanged();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                // Nothing to do.
+            }
+        }
+
+    }
+    // https://stackoverflow.com/questions/13133579/android-save-a-file-from-an-existing-uri
+    private void saveFile(InputStream source, String destination)
+    {
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+
+        try {
+            bis = new BufferedInputStream(source);
+            bos = new BufferedOutputStream(new FileOutputStream(destination, false));
+            byte[] buf = new byte[1024];
+            bis.read(buf);
+            do {
+                bos.write(buf);
+            } while(bis.read(buf) != -1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (bis != null) bis.close();
+                if (bos != null) bos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void newSession(View v) {
         EditText coderId = (EditText) findViewById(R.id.coderId);
         if (isEmpty(coderId)) {
@@ -102,11 +172,6 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         Spinner configId = (Spinner) findViewById(R.id.configId);
-        // if (isEmpty(configId)) {
-            // configId.setError("Please select a config file " +
-            //         "(or add one to <Internal Storage>/LiveTrak/config via the Google Files app.");
-        //     return;
-        // }
 
 
         Intent intent = new Intent(this, SessionActivity.class);

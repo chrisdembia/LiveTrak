@@ -20,6 +20,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
 
     private File getOutputDir() {
         File root = Environment.getExternalStorageDirectory();
-        Log.e(TAG, "getExternalStoragePublicDirectory(): " + root.getAbsolutePath());
+        Log.i(TAG, "getExternalStoragePublicDirectory(): " + root.getAbsolutePath());
         File outputDir = new File(root, APP_STORAGE_DIR);
         if (!(outputDir.exists() || outputDir.mkdirs())) {
             displayDialogAndExit("Output directory could not be created. App will exit.", "Okay");
@@ -74,7 +75,12 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
         requestWindowFeature(1);
         getWindow().setFlags(1024, 1024);
 
-        LayoutData layoutData = loadData(DEFAULT_CONFIG_FILE);
+        Bundle extras = intent.getExtras();
+        String configFile = (String) extras.get(LoginActivity.CONFIG_ID);
+        LayoutData layoutData = loadData(configFile);
+        if (layoutData == null) {
+            return;
+        }
 
         LinearLayout grid = new LinearLayout(this);
         DisplayMetrics metrics = new DisplayMetrics();
@@ -106,13 +112,7 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
                 }
                 col.addView(rb);
             }
-            // RadioButtonX rb = addNewRadioButton(new OptionData(0, "DEBUGEGG", "LogTODO", "group?"), buttonGroups);
-            // rb.getLayoutParams().height = buttonHeight;
-            // col.addView(rb);
 
-
-            //TextClock tc = new TextClock(this);
-            //col.addView(tc);
             if (colIndx == 0) {
                 pauseResumeButton = new Button(this);
                 pauseResumeButton.setText("PAUSE/RESUME");
@@ -191,20 +191,29 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
     }
 
     private LayoutData loadData(String configFileName) {
-        AssetManager assetManager = getAssets();
-        InputStream inputStream = null;
-        LayoutData layoutData = null;
 
         try {
-            inputStream = assetManager.open(configFileName);
-            layoutData = (new LayoutCsvParser()).parse(inputStream);
+            AssetManager assetManager = getAssets();
+            InputStream inputStream = null;
+            if (configFileName.equals(DEFAULT_CONFIG_FILE)) {
+                inputStream = assetManager.open(configFileName);
+            } else {
+                inputStream = new FileInputStream(
+                        (new File(LoginActivity.configDir, configFileName)).toString());
+            }
+            LayoutData layoutData = (new LayoutCsvParser()).parse(inputStream);
+            return layoutData;
         } catch (IOException e) {
             String errorMsg = "Error: Could not open config file (" + configFileName + "). App will exit.";
             Log.e(TAG, errorMsg);
             displayDialogAndExit(errorMsg, "Okay");
+        } catch (Exception e) {
+            String errorMsg = "Could not load config file. The format is likely incorrect.";
+            Log.e(TAG, errorMsg);
+            displayDialogAndExit(errorMsg, "Okay");
         }
+        return null;
 
-        return layoutData;
     }
 
     private RadioButtonX addNewRadioButton(OptionData od, HashMap<String, RadioButtonGroup> groups) {
@@ -227,6 +236,7 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
         Bundle extras = intent.getExtras();
         writeLineToOutput("CODER_ID: " + extras.get(LoginActivity.CODER_ID));
         writeLineToOutput("SUBJECT_ID: " + extras.get(LoginActivity.SUBJECT_ID));
+        writeLineToOutput("CONFIG_FILE: " + extras.get(LoginActivity.CONFIG_ID));
     }
 
     private FileWriter createNewFile(Intent intent) {
@@ -245,17 +255,16 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
     }
 
     public void displayDialogAndExit(String msg, String buttonText) {
-        new Builder(this).setMessage(msg).setNeutralButton(buttonText, new DialogInterface.OnClickListener() {
+        AlertDialog dialog = new AlertDialog.Builder(SessionActivity.this).create();
+        dialog.setMessage(msg);
+        dialog.setButton(AlertDialog.BUTTON_NEUTRAL, buttonText,
+                new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case -3:
-                        System.exit(0);
-                        return;
-                    default:
-                        return;
-                }
+                dialog.dismiss();
+                finish();
             }
-        }).show();
+        });
+        dialog.show();
     }
 
     private String getFilename(Intent intent) {

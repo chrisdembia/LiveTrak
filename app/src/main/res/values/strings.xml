@@ -13,6 +13,7 @@
     <string name="subject_id">Subject ID</string>
     <string name="config_id">Configuration File</string>
     <string name="config_file_name">Configuration File Name</string>
+    <string name="config_file_add">Add Configuration File</string>
     <string name="default_config">2014_04_05_bangladesh.csv</string>
     <string name="new_session">Start New Session</string>
     <string name="config_dir">ConfigFiles</string>
