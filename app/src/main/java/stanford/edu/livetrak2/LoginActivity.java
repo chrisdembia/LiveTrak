@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,11 +120,13 @@ public class LoginActivity extends AppCompatActivity {
                     String localFilename = lastPathSegment.substring(
                             lastPathSegment.lastIndexOf(":") + 1);
                     try {
-                        saveFile(getContentResolver().openInputStream(uri),
+                        saveFile((FileInputStream)getContentResolver().openInputStream(uri),
                                 (new File(configDir, localFilename)).toString());
                         configSpinnerAdapter.add(localFilename);
                         configSpinnerAdapter.notifyDataSetChanged();
                     } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -135,8 +138,9 @@ public class LoginActivity extends AppCompatActivity {
 
     }
     // https://stackoverflow.com/questions/13133579/android-save-a-file-from-an-existing-uri
-    private void saveFile(InputStream source, String destination)
+    private void saveFile(FileInputStream source, String destination) throws IOException
     {
+        /*
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
 
@@ -144,10 +148,9 @@ public class LoginActivity extends AppCompatActivity {
             bis = new BufferedInputStream(source);
             bos = new BufferedOutputStream(new FileOutputStream(destination, false));
             byte[] buf = new byte[1024];
-            bis.read(buf);
-            do {
+            while(bis.read(buf) != -1) {
                 bos.write(buf);
-            } while(bis.read(buf) != -1);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -157,6 +160,19 @@ public class LoginActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        */
+
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(destination).getChannel();
+            inputChannel = source.getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
         }
     }
 
