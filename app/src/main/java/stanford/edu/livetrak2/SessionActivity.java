@@ -68,9 +68,11 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
         Log.i(TAG, "output dir exists now: " + outputDir.getAbsolutePath());
         return outputDir;
     }
+
     Long getRecordingTime() {
         return Long.valueOf(SystemClock.elapsedRealtime()).longValue() - timeOffset;
     }
+
     private void initializeUi(Intent intent) {
         requestWindowFeature(1);
         getWindow().setFlags(1024, 1024);
@@ -103,7 +105,8 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
                 OptionData od = it.next();
                 RadioButtonX rb = addNewRadioButton(od, buttonGroups);
                 rb.getLayoutParams().height = buttonHeight;
-                if (!(od == null || od.group == null || od.group.equals("") || !od.group.equalsIgnoreCase("end"))) {
+                if (!(od == null || od.group == null || od.group.equals("") || !od.group.equalsIgnoreCase(
+                        "end"))) {
                     rb.setOnClickListener(new OnClickListener() {
                         public void onClick(View v) {
                             SessionActivity.this.endSession(v);
@@ -160,10 +163,12 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
                                 for (RadioButtonGroup g : buttonGroups.values()) {
                                     View view = g.getCheckedRadioButton();
                                     if (view == null) {
-                                        AlertDialog alertDialog = new AlertDialog.Builder(SessionActivity.this).create();
+                                        AlertDialog alertDialog = new AlertDialog.Builder(
+                                                SessionActivity.this).create();
                                         alertDialog.setTitle("Alert");
                                         alertDialog.setMessage("You must select a button for " + g.groupName);
-                                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,
+                                                "OK",
                                                 new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int which) {
                                                         dialog.dismiss();
@@ -173,9 +178,11 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
                                         return;
                                     }
                                 }
-                                writeOutputHeader(Long.valueOf(SystemClock.elapsedRealtime()).longValue());
+                                writeOutputHeader(Long.valueOf(SystemClock.elapsedRealtime())
+                                        .longValue());
                             } else {
-                                timeOffset = timeOffset + (Long.valueOf(SystemClock.elapsedRealtime()).longValue() - pauseTime);
+                                timeOffset = timeOffset + (Long.valueOf(SystemClock.elapsedRealtime())
+                                        .longValue() - pauseTime);
                             }
                             pauseResumeButton.setBackgroundColor(Color.rgb(200, 0, 0));
                         }
@@ -198,8 +205,8 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
             if (configFileName.equals(DEFAULT_CONFIG_FILE)) {
                 inputStream = assetManager.open(configFileName);
             } else {
-                inputStream = new FileInputStream(
-                        (new File(LoginActivity.configDir, configFileName)).toString());
+                inputStream = new FileInputStream((new File(LoginActivity.configDir,
+                        configFileName)).toString());
             }
             LayoutData layoutData = (new LayoutCsvParser()).parse(inputStream);
             return layoutData;
@@ -257,18 +264,23 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
     public void displayDialogAndExit(String msg, String buttonText) {
         AlertDialog dialog = new AlertDialog.Builder(SessionActivity.this).create();
         dialog.setMessage(msg);
-        dialog.setButton(AlertDialog.BUTTON_NEUTRAL, buttonText,
+        dialog.setButton(AlertDialog.BUTTON_NEUTRAL,
+                buttonText,
                 new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                finish();
-            }
-        });
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
         dialog.show();
     }
 
     private String getFilename(Intent intent) {
-        return new StringBuilder(String.valueOf(new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date()))).append("_").append(intent.getStringExtra(LoginActivity.SUBJECT_ID)).append(".csv").toString();
+        return new StringBuilder(String.valueOf(new SimpleDateFormat("yyyyMMdd_HHmmss",
+                Locale.getDefault()).format(new Date()))).append("_")
+                .append(intent.getStringExtra(LoginActivity.SUBJECT_ID))
+                .append(".csv")
+                .toString();
     }
 
     public void writeLineToOutput(String str) {
@@ -283,7 +295,8 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
 
     private void writeOutputHeader(Long observationTime) {
         this.timeOffset = observationTime.longValue();
-        writeLineToOutput("DATE/TIME: " + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date()));
+        writeLineToOutput("DATE/TIME: " + new SimpleDateFormat("yyyyMMdd_HHmmss",
+                Locale.getDefault()).format(new Date()));
         writeLineToOutput("");
         //writeLineToOutput("Elapsed time (ms), Location, Observation");
         String columnLabels = new String("Elapsed time (ms)");
@@ -322,7 +335,7 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
         }
         Log.w(TAG, "DEBUG row " + row);
         writeLineToOutput(row);
-       // writeLineToOutput(append(radioButtonGroupName).append(",").append(selectedOption).toString());
+        // writeLineToOutput(append(radioButtonGroupName).append(",").append(selectedOption).toString());
 /*
         if (this.timeOffset < 0) {
             //for the first observation, record everything
@@ -343,12 +356,14 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
 
     private void endSession(View v) {
         try {
-            writeLineToOutput(new StringBuilder(String.valueOf(getRecordingTime())).append(", END").toString());
+            writeLineToOutput(new StringBuilder(String.valueOf(getRecordingTime())).append(", END")
+                    .toString());
             this.fw.close();
             AlertDialog alertDialog = new AlertDialog.Builder(SessionActivity.this).create();
             alertDialog.setTitle("Success");
             alertDialog.setMessage("Session output saved successfully!");
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,
+                    "OK",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -362,7 +377,8 @@ public class SessionActivity extends Activity implements LiveTrakConstants {
             AlertDialog alertDialog = new AlertDialog.Builder(SessionActivity.this).create();
             alertDialog.setTitle("Error");
             alertDialog.setMessage("Error closing session output :(");
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,
+                    "OK",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();

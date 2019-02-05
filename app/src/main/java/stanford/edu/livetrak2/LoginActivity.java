@@ -1,10 +1,12 @@
 package stanford.edu.livetrak2;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.MediaCas;
 import android.net.Uri;
 import android.os.Bundle;
@@ -42,15 +44,32 @@ public class LoginActivity extends AppCompatActivity {
     private Spinner configId = null;
     private ArrayAdapter<String> configSpinnerAdapter = null;
     public static File configDir = null;
+    public static final int LIVETRAK_REQUEST_WRITE_EXTERNAL_STORAGE = 2;
 
     protected void onCreate(Bundle savedInstanceState) {
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (shouldShowRequestPermissionRationale(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            }
+
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    LIVETRAK_REQUEST_WRITE_EXTERNAL_STORAGE);
+        }
+
+
         super.onCreate(savedInstanceState);
         if (!isExternalStorageWritable()) {
-            new Builder(this).setMessage("App cannot run because external storage is not available. Please insert an SD card.").setNeutralButton("Ok", new OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    System.exit(0);
-                }
-            }).show();
+            new Builder(this).setMessage(
+                    "App cannot run because external storage is not available. Please insert an SD card.")
+                    .setNeutralButton("Ok", new OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.exit(0);
+                        }
+                    })
+                    .show();
         }
 
         setContentView(R.layout.activity_login);
@@ -70,7 +89,8 @@ public class LoginActivity extends AppCompatActivity {
         }
         // Create an ArrayAdapter using the string array and a default spinner layout
         configSpinnerAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, spinnerArray);
+                android.R.layout.simple_spinner_item,
+                spinnerArray);
         // Specify the layout to use when the list of choices appears
         configSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -105,11 +125,9 @@ public class LoginActivity extends AppCompatActivity {
         return field.getText().toString().trim().isEmpty();
     }
 
-    protected void onActivityResult (int requestCode,
-                                     int resultCode,
-                                     Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == GET_CONTENT_CONFIG_FILE_CODE) {
-            if(resultCode == Activity.RESULT_OK){
+            if (resultCode == Activity.RESULT_OK) {
                 String result = data.getStringExtra("result");
                 Uri uri = null;
                 uri = data.getData();
@@ -117,13 +135,21 @@ public class LoginActivity extends AppCompatActivity {
                     Log.i(TAG, "Uri: " + uri.toString());
                     String uriString = uri.toString();
                     String lastPathSegment = uri.getLastPathSegment();
-                    String localFilename = lastPathSegment.substring(
-                            lastPathSegment.lastIndexOf(":") + 1);
+                    String localFilename = lastPathSegment.substring(lastPathSegment.lastIndexOf(":") + 1);
                     try {
-                        saveFile((FileInputStream)getContentResolver().openInputStream(uri),
+                        saveFile((FileInputStream) getContentResolver().openInputStream(uri),
                                 (new File(configDir, localFilename)).toString());
-                        configSpinnerAdapter.add(localFilename);
-                        configSpinnerAdapter.notifyDataSetChanged();
+                        boolean containsElement = false;
+                        for (int i = 0; i < configSpinnerAdapter.getCount(); ++i) {
+                            if (configSpinnerAdapter.getItem(i).equals(localFilename)) {
+                                containsElement = true;
+                                break;
+                            }
+                        }
+                        if (!containsElement) {
+                            configSpinnerAdapter.add(localFilename);
+                            configSpinnerAdapter.notifyDataSetChanged();
+                        }
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     } catch (IOException e) {
@@ -137,9 +163,9 @@ public class LoginActivity extends AppCompatActivity {
         }
 
     }
+
     // https://stackoverflow.com/questions/13133579/android-save-a-file-from-an-existing-uri
-    private void saveFile(FileInputStream source, String destination) throws IOException
-    {
+    private void saveFile(FileInputStream source, String destination) throws IOException {
         /*
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
