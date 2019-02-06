@@ -2,6 +2,7 @@ package stanford.edu.livetrak2;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -45,20 +46,9 @@ public class LoginActivity extends AppCompatActivity {
     private ArrayAdapter<String> configSpinnerAdapter = null;
     public static File configDir = null;
     public static final int LIVETRAK_REQUEST_WRITE_EXTERNAL_STORAGE = 2;
+    private boolean spinnerIsPopulated = false;
 
     protected void onCreate(Bundle savedInstanceState) {
-        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (shouldShowRequestPermissionRationale(
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            }
-
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    LIVETRAK_REQUEST_WRITE_EXTERNAL_STORAGE);
-        }
-
 
         super.onCreate(savedInstanceState);
         if (!isExternalStorageWritable()) {
@@ -74,6 +64,37 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (shouldShowRequestPermissionRationale(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            }
+
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    LIVETRAK_REQUEST_WRITE_EXTERNAL_STORAGE);
+        } else {
+            populateConfigIDSpinner();
+        }
+
+
+        // Allow user to add config files.
+        // https://developer.android.com/guide/topics/providers/document-provider#java
+        final Button button = findViewById(R.id.addConfigFile);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intentOpenConfig = new Intent(Intent.ACTION_GET_CONTENT);
+                intentOpenConfig.addCategory(Intent.CATEGORY_OPENABLE);
+                intentOpenConfig.setType("text/comma-separated-values");
+                startActivityForResult(intentOpenConfig, GET_CONTENT_CONFIG_FILE_CODE);
+            }
+        });
+    }
+
+    private void populateConfigIDSpinner() {
+        if (spinnerIsPopulated) return;
+        spinnerIsPopulated = true;
         File root = Environment.getExternalStorageDirectory();
         configDir = new File(root, SessionActivity.APP_STORAGE_DIR + "config");
         if (!configDir.exists()) configDir.mkdirs();
@@ -95,18 +116,36 @@ public class LoginActivity extends AppCompatActivity {
         configSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         configId.setAdapter(configSpinnerAdapter);
+    }
 
-        // Allow user to add config files.
-        // https://developer.android.com/guide/topics/providers/document-provider#java
-        final Button button = findViewById(R.id.addConfigFile);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intentOpenConfig = new Intent(Intent.ACTION_GET_CONTENT);
-                intentOpenConfig.addCategory(Intent.CATEGORY_OPENABLE);
-                intentOpenConfig.setType("text/comma-separated-values");
-                startActivityForResult(intentOpenConfig, GET_CONTENT_CONFIG_FILE_CODE);
+    // https://developer.android.com/training/permissions/requesting#java
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case LIVETRAK_REQUEST_WRITE_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    populateConfigIDSpinner();
+                } else {
+                    AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+                    alertDialog.setTitle("Error");
+                    alertDialog.setMessage("LiveTrak must read/write files. Select ALLOW in the upcoming dialog.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,
+                            "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    startActivity(
+                                            new Intent(LoginActivity.this, LoginActivity.class));
+                                }
+                            });
+                    alertDialog.show();
+                }
+                return;
             }
-        });
+        }
     }
 
     public boolean isExternalStorageWritable() {
@@ -166,28 +205,6 @@ public class LoginActivity extends AppCompatActivity {
 
     // https://stackoverflow.com/questions/13133579/android-save-a-file-from-an-existing-uri
     private void saveFile(FileInputStream source, String destination) throws IOException {
-        /*
-        BufferedInputStream bis = null;
-        BufferedOutputStream bos = null;
-
-        try {
-            bis = new BufferedInputStream(source);
-            bos = new BufferedOutputStream(new FileOutputStream(destination, false));
-            byte[] buf = new byte[1024];
-            while(bis.read(buf) != -1) {
-                bos.write(buf);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (bis != null) bis.close();
-                if (bos != null) bos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        */
 
         FileChannel outputChannel = null;
         FileChannel inputChannel = null;
