@@ -1,4 +1,4 @@
-package stanford.edu.livetrak2;
+package com.example.livetrak3;
 
 import android.view.View;
 import java.util.HashSet;

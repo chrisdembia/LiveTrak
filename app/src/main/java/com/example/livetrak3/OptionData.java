@@ -1,4 +1,4 @@
-package stanford.edu.livetrak2;
+package com.example.livetrak3;
 
 import android.graphics.Color;
 import android.util.Log;

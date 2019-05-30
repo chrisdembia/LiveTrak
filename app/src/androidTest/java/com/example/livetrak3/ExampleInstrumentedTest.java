@@ -1,4 +1,4 @@
-package stanford.edu.livetrak2;
+package com.example.livetrak3;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("stanford.edu.livetrak2", appContext.getPackageName());
+        assertEquals("com.example.livetrak3", appContext.getPackageName());
     }
 }

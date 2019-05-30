@@ -1,4 +1,4 @@
-package stanford.edu.livetrak2;
+package com.example.livetrak3;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
@@ -25,7 +25,7 @@ public class RadioButtonX extends RadioButton {
         setTextSize(14.0f);
         setTextColor(-16777216);
         setButtonDrawable(new StateListDrawable());
-        setLayoutParams(new LayoutParams(-1, 0, 0.0f));
+        setLayoutParams(new LayoutParams(-1, -1, 1));
         setGravity(17);
         if (data == null) {
             setAlpha(0.0f);

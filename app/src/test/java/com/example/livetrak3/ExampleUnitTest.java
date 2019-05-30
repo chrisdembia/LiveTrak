@@ -1,4 +1,4 @@
-package stanford.edu.livetrak2;
+package com.example.livetrak3;
 
 import org.junit.Test;
 
