@@ -34,9 +34,13 @@ public class LayoutCsvParser {
             csvLines.add(line);
             if (line.startsWith(NEW_TAB)) {
                 if (tabData != null) {
+                    if (columnData != null) {
+                        tabData.addColumn(columnData);
+                    }
                     tabDatas.add(tabData);
                 }
                 tabData = new TabData(getTabLabel(line));
+                columnData = null;
             } else if (line.startsWith(NEW_COLUMN)) {
                 if (columnData != null) {
                     tabData.addColumn(columnData);
@@ -60,8 +64,12 @@ public class LayoutCsvParser {
             }
             line = configFileReader.readLine();
         }
-        tabData.addColumn(columnData);
-        tabDatas.add(tabData);
+        if (tabData != null) {
+            if (columnData != null) {
+                tabData.addColumn(columnData);
+            }
+            tabDatas.add(tabData);
+        }
 
         int maxColItemCount = 0;
         for (TabData td : tabDatas) {
