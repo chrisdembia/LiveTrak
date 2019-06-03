@@ -3,10 +3,10 @@ package com.example.livetrak3;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
-import android.widget.RadioButton;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.widget.RadioGroup.LayoutParams;
 
-public class RadioButtonX extends RadioButton {
+public class RadioButtonX extends AppCompatRadioButton {
     private static final float CHECKED_TRANSPARENCY = 0.7f;
     private static final int DEFAULT_TEXT_COLOR = -16777216;
     private static final int DEFAULT_TEXT_PADDING = 5;
@@ -17,6 +17,7 @@ public class RadioButtonX extends RadioButton {
     private RadioButtonGroup group;
     private String logMsg = "";
     private String originalText = "";
+    private OptionData data;
 
     public RadioButtonX(Context context, OptionData data) {
         super(context);
@@ -36,25 +37,30 @@ public class RadioButtonX extends RadioButton {
         this.logMsg = data.logMsg;
         setText(data.text);
         this.drawable = new GradientDrawable();
-        this.drawable.setShape(0);
+        this.drawable.setShape(GradientDrawable.RECTANGLE);
         this.drawable.setStroke(2, -16777216);
         this.drawable.setColor(data.color);
         this.color = data.color;
+        this.data = data;
         setBackgroundDrawable(this.drawable);
     }
 
     public void setChecked(boolean checked) {
         this.drawable = new GradientDrawable();
-        this.drawable.setShape(0);
+        this.drawable.setShape(GradientDrawable.RECTANGLE);
         this.drawable.setStroke(2, -16777216);
         this.drawable.setColor(this.color);
         if (checked) {
             this.drawable.setStroke(8, -16711936);
         }
+        if (data != null) {
+            data.checked = checked;
+        }
         setBackgroundDrawable(this.drawable);
         super.setChecked(checked);
     }
 
+    @Override
     public void toggle() {
         if (!isChecked() && this.group != null) {
             super.toggle();

@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -134,7 +133,8 @@ public class SessionActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         Bundle extras = intent.getExtras();
-        getSupportActionBar().setTitle("Session for subject '" + extras.get(LoginActivity.SUBJECT_ID) + "'");
+        getSupportActionBar().setTitle("Session for subject '" + extras.get(
+                LoginActivity.SUBJECT_ID) + "'");
 
         String configFile = (String) extras.get(LoginActivity.CONFIG_ID);
         mLayoutData = loadData(configFile);
@@ -142,7 +142,8 @@ public class SessionActivity extends AppCompatActivity {
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(
-                getSupportFragmentManager(), mLayoutData);
+                getSupportFragmentManager(),
+                mLayoutData);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -182,7 +183,8 @@ public class SessionActivity extends AppCompatActivity {
             displayDialogAndExit(errorMsg, "Okay");
         } catch (Exception e) {
             String errorMsg = "Could not load config file. The format is " +
-                    "likely incorrect. Details: " + e.getMessage();
+                    "likely incorrect. Details: " + e
+                    .getMessage();
             Log.e(TAG, errorMsg);
             displayDialogAndExit(errorMsg, "Okay");
         }
@@ -374,19 +376,18 @@ public class SessionActivity extends AppCompatActivity {
                         // Has recording started?
                         if (isRunning) {
                             Long time = getRecordingTime();
-                            Long hours =
-                                    TimeUnit.MILLISECONDS.toHours(time);
-                            Long minutes = TimeUnit.MILLISECONDS.toMinutes(
-                                    time);
-                            Long seconds = TimeUnit.MILLISECONDS.toSeconds(
-                                    time);
+                            Long hours = TimeUnit.MILLISECONDS.toHours(time);
+                            Long minutes =
+                                    TimeUnit.MILLISECONDS.toMinutes(time);
+                            Long seconds =
+                                    TimeUnit.MILLISECONDS.toSeconds(time);
                             String timeText = String.format("%02d:%02d" +
                                             ":%02d",
                                     hours,
                                     minutes - TimeUnit.HOURS.toMinutes(hours),
-                                    seconds - TimeUnit.MINUTES.toSeconds(
-                                            minutes));
-                            MenuItem timerText = menuInTimer.findItem(R.id.timer_text);
+                                    seconds - TimeUnit.MINUTES.toSeconds(minutes));
+                            MenuItem timerText =
+                                    menuInTimer.findItem(R.id.timer_text);
                             String msg = "TIME: " + timeText;
                             Log.i(TAG, msg);
                             timerText.setTitle(msg);
@@ -496,21 +497,10 @@ public class SessionActivity extends AppCompatActivity {
 
             final SessionActivity sessionActivity =
                     (SessionActivity) getActivity();
-            TabData tabData = sessionActivity.mLayoutData.tabDatas.get(getArguments().getInt(ARG_TAB_NUMBER));
+            TabData tabData = sessionActivity.mLayoutData.tabDatas.get(
+                    getArguments().getInt(ARG_TAB_NUMBER));
 
-            LinearLayout grid =
-                    (LinearLayout) rootView.findViewById(R.id.grid); // new
-            // LinearLayout(getActivity());
-            DisplayMetrics metrics = new DisplayMetrics();
-            // TODO wrong height!
-            sessionActivity.getWindowManager()
-                    .getDefaultDisplay()
-                    .getMetrics(metrics);
-//            int height = getView().getHeight();
-//            int buttonHeight = (int) (((double) height) / (((double)
-//            (layoutData.maxColItemCount + 3)) * 1.0d));
-//            int buttonHeight =
-//                    (int) (((double) metrics.heightPixels) / (((double) (layoutData.maxColItemCount + 3)) * 1.0d));
+            LinearLayout grid = (LinearLayout) rootView.findViewById(R.id.grid);
             int numColumns = tabData.columnDatas.size();
             for (int colIndx = 0; colIndx < numColumns; colIndx++) {
                 ColumnData colData = tabData.columnDatas.get(colIndx);
@@ -529,6 +519,7 @@ public class SessionActivity extends AppCompatActivity {
                     RadioButtonX rb = addNewRadioButton(sessionActivity,
                             od,
                             sessionActivity.buttonGroups);
+                    rb.setChecked(od.checked);
 //                    rb.getLayoutParams().height = buttonHeight;
                     if (!(od == null || od.group == null || od.group.equals(
                             "") || !od.group
@@ -543,7 +534,6 @@ public class SessionActivity extends AppCompatActivity {
                 }
                 grid.addView(col);
             }
-
             return rootView;
         }
     }
@@ -580,5 +570,4 @@ public class SessionActivity extends AppCompatActivity {
     }
 }
 
-// TODO: retain which buttons are highlighted when switching tabs. don't want to create new fragments! must save the old ones. or save state somehow.
 // TODO: Add button to remove config files.

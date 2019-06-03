@@ -6,6 +6,7 @@ import android.util.Log;
 public class OptionData {
     String TAG = "OptionsData";
     int color;
+    boolean checked;
     String group;
     String logMsg;
     String text;
