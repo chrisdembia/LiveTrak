@@ -22,7 +22,7 @@ public class RadioButtonGroup {
         button.setGroup(this);
     }
 
-    public void check(RadioButtonX b) {
+    public void check(RadioButtonX b, boolean recordChange) {
         if ((b == null || b != this.checkedView) && !this.mProtectFromCheckedChange) {
             this.mProtectFromCheckedChange = true;
             if (this.checkedView != null) {
@@ -30,8 +30,14 @@ public class RadioButtonGroup {
             }
             this.mProtectFromCheckedChange = false;
             setCheckedView(b);
-            this.session.recordChange(this);
+            if (recordChange) {
+                this.session.recordChange(this);
+            }
         }
+
+    }
+    public void check(RadioButtonX b) {
+        check(b, true);
     }
 
     public View getCheckedRadioButton() {

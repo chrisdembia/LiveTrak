@@ -519,7 +519,14 @@ public class SessionActivity extends AppCompatActivity {
                     RadioButtonX rb = addNewRadioButton(sessionActivity,
                             od,
                             sessionActivity.buttonGroups);
+                    // We require this so that restoring to a previous tab
+                    // retains which buttons were checked.
                     rb.setChecked(od.checked);
+                    if (od.checked && sessionActivity.buttonGroups.containsKey(od.group)) {
+                        // We must also tell the RadioButtonGroup which button
+                        // was checked so it can be unchecked.
+                        sessionActivity.buttonGroups.get(od.group).check(rb, false);
+                    }
 //                    rb.getLayoutParams().height = buttonHeight;
                     if (!(od == null || od.group == null || od.group.equals(
                             "") || !od.group
