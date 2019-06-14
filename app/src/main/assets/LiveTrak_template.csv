@@ -126,11 +126,11 @@
 #c7e9b4,Other,Other,DISPOSAL
 #c7e9b4,Could not observe ,CouldNotObserve,DISPOSAL
 <COLUMN> Bottom cleaned,,,
-#7fcdbb,No defecation,NoDefecation,BOTTOM CLEANED
-#7fcdbb,Not cleaned,NotCleaned,BOTTOM CLEANED
-#7fcdbb,Hand,Hand,BOTTOM CLEANED
-#7fcdbb,Rag or paper,RagPaper,BOTTOM CLEANED
-#7fcdbb,Water only,WaterOnly,BOTTOM CLEANED
-#7fcdbb,Water and soap,WaterAndSoap,BOTTOM CLEANED
-#7fcdbb,Other,Other,BOTTOM CLEANED
-#7fcdbb,Could not observe,CouldNotObserve,BOTTOM CLEANED
+#7fcdbb,No defecation,NoDefecation,BOTTOM_CLEANED
+#7fcdbb,Not cleaned,NotCleaned,BOTTOM_CLEANED
+#7fcdbb,Hand,Hand,BOTTOM_CLEANED
+#7fcdbb,Rag or paper,RagPaper,BOTTOM_CLEANED
+#7fcdbb,Water only,WaterOnly,BOTTOM_CLEANED
+#7fcdbb,Water and soap,WaterAndSoap,BOTTOM_CLEANED
+#7fcdbb,Other,Other,BOTTOM_CLEANED
+#7fcdbb,Could not observe,CouldNotObserve,BOTTOM_CLEANED
