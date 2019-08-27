@@ -1,0 +1,136 @@
+<TAB> Mouthing,,,
+<COLUMN> Caretaker,,,
+#7fcdbb,No caretaking,NoCaretaking,CARETAKER_ACTIVITY
+#7fcdbb,Breastfeeding,Breastfeeding,CARETAKER_ACTIVITY
+#7fcdbb,Laundry,Laundry,CARETAKER_ACTIVITY
+#7fcdbb,Cooking,Cooking,CARETAKER_ACTIVITY
+#7fcdbb,Other chore,OtherChore,CARETAKER_ACTIVITY
+#7fcdbb,Sitting relaxing talking,SittingRelaxingTalking,CARETAKER_ACTIVITY
+#7fcdbb,Other  ,Other  ,CARETAKER_ACTIVITY
+#225ea8,In house,InHouse,CHILD_LOCATION
+#225ea8,In compound,InCompound,CHILD_LOCATION
+#225ea8,Outside compound,OutsideCompound,CHILD_LOCATION
+#225ea8,Other,Other,CHILD_LOCATION
+<COLUMN> Child location,,,
+#41b6c4,Held by caretaker,HeldByCaretaker,CHILD_LOCATION_DETAIL
+#41b6c4,Held by other,HeldByOther,CHILD_LOCATION_DETAIL
+#41b6c4,On bare ground,OnBareGround,CHILD_LOCATION_DETAIL
+#41b6c4,On groundcover,OnGroundcover,CHILD_LOCATION_DETAIL
+#41b6c4,In official playpen,OfficialPlaypen,CHILD_LOCATION_DETAIL
+#41b6c4,On official mat only,OfficialMat,CHILD_LOCATION_DETAIL
+#41b6c4,Other,Other,CHILD_LOCATION_DETAIL
+#c7e9b4,Shoes,Shoes,OBJECT_MOUTHED
+#c7e9b4,Animal,Animal,OBJECT_MOUTHED
+#c7e9b4,Chicken feces,ChickenFeces,OBJECT_MOUTHED
+#c7e9b4,Cow sheep goat feces,CowSheepGoatFeces,OBJECT_MOUTHED
+#c7e9b4,Human feces,HumanFeces,OBJECT_MOUTHED
+<COLUMN> Object,,,
+#c7e9b4,Nothing,Nothing,OBJECT_MOUTHED
+#c7e9b4,Infant hand,InfantHand,OBJECT_MOUTHED
+#c7e9b4,Infant other body part,InfantOtherBodyPart,OBJECT_MOUTHED
+#c7e9b4,Others body,OthersBody,OBJECT_MOUTHED
+#c7e9b4,Mom's breast,MomBreast,OBJECT_MOUTHED
+#c7e9b4,Cooked food,CookedFood,OBJECT_MOUTHED
+#c7e9b4,Household item,HouseholdItem,OBJECT_MOUTHED
+#c7e9b4,Soil mud stones,SoilMudStones,OBJECT_MOUTHED
+#c7e9b4,Puddle pee,PuddlePee,OBJECT_MOUTHED
+#c7e9b4,Toy play things,ToyPlayThings,OBJECT_MOUTHED
+#c7e9b4,Phone,Phone,OBJECT_MOUTHED
+#c7e9b4,Other clothing,OtherClothing,OBJECT_MOUTHED
+#c7e9b4,Other   ,Other   ,OBJECT_MOUTHED
+<COLUMN> Obj location,,,
+#1d91c0,Dry soil,DrySoil,OBJECT_LOCATION
+#1d91c0,Wet soil,WetSoil,OBJECT_LOCATION
+#1d91c0,Dung dirt floor,DungDirtFloor,OBJECT_LOCATION
+#1d91c0,Concrete floor,ConcreteFloor,OBJECT_LOCATION
+#1d91c0,Playpen,Playpen,OBJECT_LOCATION
+#1d91c0,Other,Other,OBJECT_LOCATION
+#0c2c84,ObjLoc_No dirt,ObjLocNoDirt,OBJECT_LOCATION_CLEANLINESS
+#0c2c84,ObjLoc_Visible dirt,ObjLocVisibleDirt,OBJECT_LOCATION_CLEANLINESS
+#0c2c84,ObjLoc_Fly-ridden,ObjLocFlyRidden,OBJECT_LOCATION_CLEANLINESS
+#ffffd9,Obj_No dirt,ObjNoDirt,OBJECT_CLEANLINESS
+#ffffd9,Obj_Visible dirt,ObjVisibleDirt,OBJECT_CLEANLINESS
+#ffffd9,Obj_Fly-ridden,ObjFlyRidden,OBJECT_CLEANLINESS
+<COLUMN> Mitigation,,,
+#edf8b1,Taken away,TakenAway,MITIGATION
+#edf8b1,Taken returned,TakenReturned,MITIGATION
+#edf8b1,Different object,DifferentObject,MITIGATION
+#edf8b1,Child moved,ChildMoved,MITIGATION
+#edf8b1,Hands wiped,HandsWiped,MITIGATION
+#edf8b1,Hands washed soap,HandsWashedSoap,MITIGATION
+<TAB> Handwashing,,,
+<COLUMN> Why,,,
+#1d91c0,No handwashing,NoHandwashing,WHY_WASHED
+#1d91c0,Before feeding child,BeforeFeedingChild,WHY_WASHED
+#1d91c0,Before eating,BeforeEating,WHY_WASHED
+#1d91c0,After defecation,AfterDefecation,WHY_WASHED
+#1d91c0,After infant defecation,AfterInfantDefecation,WHY_WASHED
+#1d91c0,After touching animal feces,AfterTouchingAnimalFeces,WHY_WASHED
+#1d91c0,After housecleaning,AfterHousecleaning,WHY_WASHED
+#1d91c0,After eating,AfterEating,WHY_WASHED
+#1d91c0,After farm work,AfterFarmWork,WHY_WASHED
+#1d91c0,Hands visibly dirty,HandsVisiblyDirty,WHY_WASHED
+#1d91c0,Other,Other,WHY_WASHED
+<COLUMN> Who,,,
+#c7e9b4,Child,Child,WHO_WASHED
+#c7e9b4,Child with mother,ChildWithMother,WHO_WASHED
+#c7e9b4,Child with other,ChildWithOther,WHO_WASHED
+#c7e9b4,Mother,Mother,WHO_WASHED
+#c7e9b4,Other caretaker,OtherCaretaker,WHO_WASHED
+#c7e9b4,Other,Other,WHO_WASHED
+#ffffd9,No handwashing,NoHandwashing,HANDS_WASHED
+#ffffd9,1 hand,OneHand,HANDS_WASHED
+#ffffd9,2 hands,TwoHands,HANDS_WASHED
+<COLUMN> Soap and water,,,
+#7fcdbb,No handwashing,NoHandwashing,SOAP
+#7fcdbb,Water only,WaterOnly,SOAP
+#7fcdbb,Water and soap,WaterAndSoap,SOAP
+#7fcdbb,Water and ash,WaterAndAash,SOAP
+#7fcdbb,Other,Other,SOAP
+#225ea8,No handwashing,NoHandwashing,WATER
+#225ea8,Standing,Standing,WATER
+#225ea8,Dripping,Dripping,WATER
+#225ea8,Running,Running,WATER
+<COLUMN> Drying,,,
+#41b6c4,No handwashing,NoHandwashing,DRYING
+#41b6c4,No drying,NoDrying,DRYING
+#41b6c4,Dirty clothes,DirtyClothes,DRYING
+#41b6c4,Clean clothes,CleanClothes,DRYING
+#41b6c4,Dirty towel,DirtyTowel,DRYING
+#41b6c4,Clean towel,CleanTowel,DRYING
+#41b6c4,Other,Other,DRYING
+<TAB> Defecation,,,
+<COLUMN> Poop location,,,
+#1d91c0,No defecation,NoDefecation,DEFECATION_LOCATION
+#1d91c0,Compound_not held,CompoundNotHeld,DEFECATION_LOCATION
+#1d91c0,Compound_held ,CompoundHeld ,DEFECATION_LOCATION
+#1d91c0,Playpen,Playpen,DEFECATION_LOCATION
+#1d91c0,In diaper or pants,DiaperPants,DEFECATION_LOCATION
+#1d91c0,Potty,Potty,DEFECATION_LOCATION
+#1d91c0,Latrine,Latrine,DEFECATION_LOCATION
+#1d91c0,Other,Other,DEFECATION_LOCATION
+<COLUMN> Picked up,,,
+#ffffd9,No defecation,NoDefecation,PICKED_UP
+#ffffd9,Not applicable,NotApplicable,PICKED_UP
+#ffffd9,Rag,Rag,PICKED_UP
+#ffffd9,Shovel,Shovel,PICKED_UP
+#ffffd9,Untended 30 min,UntendedThirtyMin,PICKED_UP
+#ffffd9,Other,Other,PICKED_UP
+#ffffd9,Could not observe,CouldNotObserve,PICKED_UP
+<COLUMN> Disposal,,,
+#c7e9b4,No defecation,NoDefecation,DISPOSAL
+#c7e9b4,Latrine,Latrine,DISPOSAL
+#c7e9b4,Buried,Buried,DISPOSAL
+#c7e9b4,Garbage,Garbage,DISPOSAL
+#c7e9b4,Bush or ditch,BushDitch,DISPOSAL
+#c7e9b4,Other,Other,DISPOSAL
+#c7e9b4,Could not observe ,CouldNotObserve,DISPOSAL
+<COLUMN> Bottom cleaned,,,
+#7fcdbb,No defecation,NoDefecation,BOTTOM_CLEANED
+#7fcdbb,Not cleaned,NotCleaned,BOTTOM_CLEANED
+#7fcdbb,Hand,Hand,BOTTOM_CLEANED
+#7fcdbb,Rag or paper,RagPaper,BOTTOM_CLEANED
+#7fcdbb,Water only,WaterOnly,BOTTOM_CLEANED
+#7fcdbb,Water and soap,WaterAndSoap,BOTTOM_CLEANED
+#7fcdbb,Other,Other,BOTTOM_CLEANED
+#7fcdbb,Could not observe,CouldNotObserve,BOTTOM_CLEANED

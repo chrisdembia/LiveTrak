@@ -491,6 +491,7 @@ public class SessionActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container
                 , Bundle savedInstanceState) {
+            Log.i(TAG, "ON CREATE VIEW");
             View rootView = inflater.inflate(R.layout.fragment_session,
                     container,
                     false);
@@ -519,14 +520,17 @@ public class SessionActivity extends AppCompatActivity {
                     RadioButtonX rb = addNewRadioButton(sessionActivity,
                             od,
                             sessionActivity.buttonGroups);
-                    // We require this so that restoring to a previous tab
-                    // retains which buttons were checked.
-                    rb.setChecked(od.checked);
+                    // We must cache od.checked, because RadioButtonGroup.check()
+                    // causes od.checked to be set to false.
+                    boolean checked = od.checked;
                     if (od.checked && sessionActivity.buttonGroups.containsKey(od.group)) {
                         // We must also tell the RadioButtonGroup which button
                         // was checked so it can be unchecked.
                         sessionActivity.buttonGroups.get(od.group).check(rb, false);
                     }
+                    // We require this so that restoring to a previous tab
+                    // retains which buttons were checked.
+                    rb.setChecked(checked);
 //                    rb.getLayoutParams().height = buttonHeight;
                     if (!(od == null || od.group == null || od.group.equals(
                             "") || !od.group

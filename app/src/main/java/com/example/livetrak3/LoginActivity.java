@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String SUBJECT_ID = "edu.stanford.livetrak.SUBJECT_ID";
     public static final String CONFIG_ID = "edu.stanford.livetrak.CONFIG_ID";
     public static final String APP_STORAGE_DIR = "LiveTrak/";
-    public static final String DEFAULT_CONFIG_FILE = "LiveTrak_soil_v1.csv";
+    public static final String DEFAULT_CONFIG_FILE = "LiveTrak_template.csv";
     public static final int LIVETRAK_REQUEST_WRITE_EXTERNAL_STORAGE = 2;
     private static final int GET_CONTENT_CONFIG_FILE_CODE = 1;
     public static File configDir = null;
